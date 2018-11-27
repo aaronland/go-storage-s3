@@ -1,9 +1,9 @@
-package storage
+package s3
 
 import (
 	"errors"
-	"github.com/aaronland/go-storage"	
-	"github.com/whosonfirst/go-whosonfirst-aws/s3"
+	"github.com/aaronland/go-storage"
+	wof_s3 "github.com/whosonfirst/go-whosonfirst-aws/s3"
 	"io"
 )
 
@@ -28,19 +28,19 @@ func (f *FSFile) Close() error {
 
 type S3Store struct {
 	storage.Store
-	config *s3.S3Config
-	conn *s3.S3Connection
+	config *wof_s3.S3Config
+	conn *wof_s3.S3Connection
 }
 
-func NewS3Store(dsn string) (Store, error) {
+func NewS3Store(dsn string) (storage.Store, error) {
 
-	cfg, err := s3.NewS3ConfigFromString(dsn)
+	cfg, err := wof_s3.NewS3ConfigFromString(dsn)
 
 	if err != nil {
 		return nil, err
 	}
 
-	conn, err := s3.NewS3Connection(cfg)
+	conn, err := wof_s3.NewS3Connection(cfg)
 
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func NewS3Store(dsn string) (Store, error) {
 }
 
 func (s *S3Store) URI(k string) string {
-	return c.conn.URI(key)
+	return s.conn.URI(k)
 }
 
 func (s *S3Store) Get(k string) (io.ReadCloser, error) {
@@ -90,11 +90,11 @@ func (s *S3Store) Exists(k string) (bool, error) {
 
 func (s *S3Store) Walk(user_cb storage.WalkFunc) error {
 	
-	list_cb := func(obj *S3Object) error {
-		user_cb(obj.Key, obj)
+	list_cb := func(obj *wof_s3.S3Object) error {
+		return user_cb(obj.Key, obj)
 	}
 
-	list_opts := s3.DefaultS3ListOptions()
+	list_opts := wof_s3.DefaultS3ListOptions()
 	
 	return s.conn.List(list_cb, list_opts)
 }
