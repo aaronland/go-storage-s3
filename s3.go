@@ -3,11 +3,8 @@ package storage
 import (
 	"errors"
 	"github.com/aaronland/go-storage"	
-	"github.com/whosonfirst/go-whosonfirst-aws"
+	"github.com/whosonfirst/go-whosonfirst-aws/s3"
 	"io"
-	_ "log"
-	"os"
-	"path/filepath"
 )
 
 /*
