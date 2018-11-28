@@ -3,6 +3,8 @@ package s3
 import (
 	"errors"
 	"github.com/aaronland/go-storage"
+	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/service/s3"
 	wof_s3 "github.com/whosonfirst/go-whosonfirst-aws/s3"
 	"io"
 )
@@ -29,7 +31,7 @@ func (f *FSFile) Close() error {
 type S3Store struct {
 	storage.Store
 	config *wof_s3.S3Config
-	conn *wof_s3.S3Connection
+	conn   *wof_s3.S3Connection
 }
 
 func NewS3Store(dsn string) (storage.Store, error) {
@@ -48,7 +50,7 @@ func NewS3Store(dsn string) (storage.Store, error) {
 
 	s := S3Store{
 		config: cfg,
-		conn:       conn,
+		conn:   conn,
 	}
 
 	return &s, nil
@@ -82,19 +84,31 @@ func (s *S3Store) Exists(k string) (bool, error) {
 	_, err := s.conn.Head(k)
 
 	if err != nil {
-		return false, err
+
+		aws_err := err.(awserr.Error)
+
+		switch aws_err.Code() {
+		case "NotFound":
+			return false, nil
+		case s3.ErrCodeNoSuchKey:
+			return false, nil
+		case s3.ErrCodeNoSuchBucket:
+			return false, nil
+		default:
+			return false, err
+		}
 	}
 
 	return true, nil
 }
 
 func (s *S3Store) Walk(user_cb storage.WalkFunc) error {
-	
+
 	list_cb := func(obj *wof_s3.S3Object) error {
 		return user_cb(obj.Key, obj)
 	}
 
 	list_opts := wof_s3.DefaultS3ListOptions()
-	
+
 	return s.conn.List(list_cb, list_opts)
 }
