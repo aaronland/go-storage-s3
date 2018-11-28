@@ -27,3 +27,6 @@ vendor-deps: rmdeps deps
 
 fmt:
 	go fmt *.go
+
+bin: self
+	@GOPATH=$(GOPATH) go build -o bin/echo cmd/echo.go
