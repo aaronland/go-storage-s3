@@ -15,6 +15,7 @@ rmdeps:
 build:	fmt bin
 
 deps:
+	@GOPATH=$(GOPATH) go get -u "github.com/aaronland/go-string"
 	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/walk"
 
 vendor-deps: rmdeps deps

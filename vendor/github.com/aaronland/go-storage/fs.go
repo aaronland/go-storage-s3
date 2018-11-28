@@ -2,6 +2,7 @@ package storage
 
 import (
 	"errors"
+	"github.com/aaronland/go-string/dsn"	
 	"github.com/whosonfirst/walk"
 	"io"
 	_ "log"
@@ -33,9 +34,15 @@ type FSStore struct {
 	dir_perms  os.FileMode
 }
 
-func NewFSStore(root string) (Store, error) {
+func NewFSStore(str_dsn string) (Store, error) {
 
-	abs_root, err := filepath.Abs(root)
+	dsn_map, err := dsn.StringToDSNWithKeys(str_dsn, "root")
+
+	if err != nil {
+		return nil, err
+	}
+	
+	abs_root, err := filepath.Abs(dsn_map["root"])
 
 	if err != nil {
 		return nil, err
