@@ -82,7 +82,7 @@ func (s *S3Store) Get(k string) (io.ReadCloser, error) {
 	return s.conn.Get(k)
 }
 
-func (s *S3Store) Open(k string) (io.WriteCloser, error) {
+func (s *S3Store) Create(k string, args ...interface{}) (io.WriteCloser, error) {
 
 	return NewS3File(s.conn, k)
 }

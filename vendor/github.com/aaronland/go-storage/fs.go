@@ -50,36 +50,36 @@ func NewFSStore(str_dsn string) (Store, error) {
 	}
 
 	/*
-	file_perms := 0644
-	dir_perms := 0755
+		file_perms := 0644
+		dir_perms := 0755
 
-	str_fileperms, ok := dsn_map["file_perms"]
+		str_fileperms, ok := dsn_map["file_perms"]
 
-	if ok {
+		if ok {
 
-		perms, err := strconv.ParseUint(str_fileperms, 10, 32)
+			perms, err := strconv.ParseUint(str_fileperms, 10, 32)
 
-		if err != nil {
-			return nil, errors.New("Invalid file permissions")
+			if err != nil {
+				return nil, errors.New("Invalid file permissions")
+			}
+
+			file_perms = perms
 		}
 
-		file_perms = perms
-	}
+		str_dirperms, ok := dsn_map["dir_perms"]
 
-	str_dirperms, ok := dsn_map["dir_perms"]
+		if ok {
 
-	if ok {
+			perms, err := strconv.ParseUint(str_dirperms, 10, 32)
 
-		perms, err := strconv.ParseUint(str_dirperms, 10, 32)
+			if err != nil {
+				return nil, errors.New("Invalid directory permissions")
+			}
 
-		if err != nil {
-			return nil, errors.New("Invalid directory permissions")
+			dir_perms = perms
 		}
-
-		dir_perms = perms
-	}
 	*/
-	
+
 	s := FSStore{
 		root:       abs_root,
 		file_perms: 0644,
@@ -99,7 +99,7 @@ func (s *FSStore) Get(k string) (io.ReadCloser, error) {
 	return os.Open(path)
 }
 
-func (s *FSStore) Create(k string) (io.WriteCloser, error) {
+func (s *FSStore) Create(k string, args ...interface{}) (io.WriteCloser, error) {
 
 	path := filepath.Join(s.root, k)
 
