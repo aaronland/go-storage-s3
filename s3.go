@@ -1,32 +1,50 @@
 package s3
 
 import (
-	"errors"
+	"bytes"
 	"github.com/aaronland/go-storage"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 	wof_s3 "github.com/whosonfirst/go-whosonfirst-aws/s3"
 	"io"
+	"io/ioutil"
 )
 
-/*
-type FSFile struct {
+type S3File struct {
 	io.WriteCloser
-	fh *os.File
+	buf *bytes.Buffer
+	conn *wof_s3.S3Connection
+	path string
 }
 
-func (f *FSFile) Write(b []byte) (int, error) {
-	return f.fh.Write(b)
+func NewS3File(conn *wof_s3.S3Connection, path string) (io.WriteCloser, error) {
+
+	buf := new(bytes.Buffer)
+	
+	f := S3File{
+		buf: buf,
+		conn: conn,
+		path: path,
+	}
+
+	return &f, nil
 }
 
-func (f *FSFile) WriteString(b string) (int, error) {
-	return f.fh.Write([]byte(b))
+func (f *S3File) Write(b []byte) (int, error) {
+	return f.buf.Write(b)
 }
 
-func (f *FSFile) Close() error {
-	return f.fh.Close()
+func (f *S3File) WriteString(b string) (int, error) {
+	return f.Write([]byte(b))
 }
-*/
+
+func (f *S3File) Close() error {
+
+	r := bytes.NewReader(f.buf.Bytes())
+	fh := ioutil.NopCloser(r)
+	
+	return f.conn.Put(f.path, fh)
+}
 
 type S3Store struct {
 	storage.Store
@@ -66,7 +84,7 @@ func (s *S3Store) Get(k string) (io.ReadCloser, error) {
 
 func (s *S3Store) Open(k string) (io.WriteCloser, error) {
 
-	return nil, errors.New("Please write me")
+	return NewS3File(s.conn, k)
 }
 
 func (s *S3Store) Put(k string, in io.ReadCloser) error {
