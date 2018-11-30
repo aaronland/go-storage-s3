@@ -99,7 +99,7 @@ func (s *FSStore) Get(k string) (io.ReadCloser, error) {
 	return os.Open(path)
 }
 
-func (s *FSStore) Open(k string) (io.WriteCloser, error) {
+func (s *FSStore) Create(k string) (io.WriteCloser, error) {
 
 	path := filepath.Join(s.root, k)
 
@@ -127,7 +127,7 @@ func (s *FSStore) Open(k string) (io.WriteCloser, error) {
 
 func (s *FSStore) Put(k string, in io.ReadCloser) error {
 
-	out, err := s.Open(k)
+	out, err := s.Create(k)
 
 	if err != nil {
 		return err

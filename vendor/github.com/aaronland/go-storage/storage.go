@@ -23,5 +23,5 @@ type Store interface {
 	Exists(string) (bool, error)
 	Walk(WalkFunc) error
 	URI(string) string
-	Open(string) (io.WriteCloser, error)
+	Create(string) (io.WriteCloser, error)
 }

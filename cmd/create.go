@@ -19,7 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fh, err := store.Open(*path)
+	fh, err := store.Create(*path)
 
 	if err != nil {
 		log.Fatal(err)

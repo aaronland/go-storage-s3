@@ -21,7 +21,7 @@ func main(){
 
 	key := *fname
 	
-	fh, err := store.Open(key)
+	fh, err := store.Create(key)
 
 	if err != nil {
 		log.Fatal(err)
