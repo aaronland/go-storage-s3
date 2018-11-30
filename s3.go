@@ -17,6 +17,10 @@ type S3File struct {
 	path string
 }
 
+// please make this better to periodically flush and append
+// and all that good stuff... someone else must have done
+// this by now, right? (20181120/thisisaaronland)
+
 func NewS3File(conn *wof_s3.S3Connection, path string) (io.WriteCloser, error) {
 
 	buf := new(bytes.Buffer)
