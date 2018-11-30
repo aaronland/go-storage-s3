@@ -12,7 +12,7 @@ import (
 
 type S3File struct {
 	io.WriteCloser
-	buf *bytes.Buffer
+	buf  *bytes.Buffer
 	conn *wof_s3.S3Connection
 	path string
 }
@@ -20,9 +20,9 @@ type S3File struct {
 func NewS3File(conn *wof_s3.S3Connection, path string) (io.WriteCloser, error) {
 
 	buf := new(bytes.Buffer)
-	
+
 	f := S3File{
-		buf: buf,
+		buf:  buf,
 		conn: conn,
 		path: path,
 	}
@@ -42,7 +42,7 @@ func (f *S3File) Close() error {
 
 	r := bytes.NewReader(f.buf.Bytes())
 	fh := ioutil.NopCloser(r)
-	
+
 	return f.conn.Put(f.path, fh)
 }
 

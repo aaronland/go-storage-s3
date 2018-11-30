@@ -31,3 +31,4 @@ fmt:
 
 bin: self
 	@GOPATH=$(GOPATH) go build -o bin/exists cmd/exists.go
+	@GOPATH=$(GOPATH) go build -o bin/write cmd/write.go
